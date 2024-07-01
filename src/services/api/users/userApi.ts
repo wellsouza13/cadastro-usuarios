@@ -1,9 +1,10 @@
-import { UserForm, UsersResponse } from "../../../interface/api/users";
+
+import { UserForm,  UsersResponse, UserResponse } from "../../../interface/api/users";
 import axiosInstance from "../axiosConfig";
 
 export const getUsers = async () => {
   try {
-    const response = await axiosInstance.get<UsersResponse[]>('/users');
+    const response = await axiosInstance.get<UsersResponse>('/users');
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar usuários:', error);
@@ -43,10 +44,11 @@ export const deleteUser = async (id: number) => {
 
 export const getUserById = async (id: number) => {
   try {
-    const response = await axiosInstance.get<UsersResponse>(`/users/${id}`);
+    const response = await axiosInstance.get<UserResponse>(`/users/${id}`);
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar usuário:', error);
     throw error;
   }
 };
+

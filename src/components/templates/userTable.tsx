@@ -1,6 +1,8 @@
+// src/components/UserTable.tsx
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteUser, getUsers } from "../../services/api/users/userApi";
-import { UsersResponse } from "../../interface/api/users";
+import { User, UsersResponse } from "../../interface/api/users";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { AxiosError } from "axios";
@@ -18,15 +20,17 @@ export const UserTable = () => {
   };
 
   const {
-    data: users,
+    data,
     error,
     isLoading,
     refetch,
-  } = useQuery({
+  } = useQuery<UsersResponse>({
     queryKey: ["users"],
     queryFn: getUsers,
     refetchOnWindowFocus: false,
   });
+
+  const users = data?.users || [];
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
@@ -51,6 +55,7 @@ export const UserTable = () => {
   if (error instanceof Error)
     return <div>An error occurred: {error.message}</div>;
 
+
   return (
     <div className="table-responsive">
       <table className="table table-hover">
@@ -63,28 +68,34 @@ export const UserTable = () => {
           </tr>
         </thead>
         <tbody>
-          {users?.map((user: UsersResponse) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>
-                <button
-                  className="btn btn-primary me-2"
-                  onClick={() => handleUserEdit(user?.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleUserDelete(user?.id)}
-                  disabled={isPending}
-                >
-                  Delete
-                </button>
-              </td>
+          {Array.isArray(users) && users.length > 0 ? (
+            users.map((user: User) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>
+                  <button
+                    className="btn btn-primary me-2"
+                    onClick={() => handleUserEdit(user?.id)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleUserDelete(user?.id)}
+                    disabled={isPending}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4}>No users available</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       <ToastMessage

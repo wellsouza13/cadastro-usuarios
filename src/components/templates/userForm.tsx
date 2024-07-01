@@ -6,7 +6,7 @@ import {
   putUser,
 } from "../../services/api/users/userApi";
 import { AxiosError } from "axios";
-import {  useParams } from "react-router";
+import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "../loadingSpinner";
 import { ToastMessage } from "../toastMessage";
@@ -67,8 +67,8 @@ export const UserForm = () => {
     queryFn: () =>
       getUserById(Number(id)).then((response) => {
         const convertedResponse = {
-          ...response,
-          age: Number(response.age),
+          ...response.user,
+          age: Number(response.user.age),
         };
         reset(convertedResponse);
         return response;
